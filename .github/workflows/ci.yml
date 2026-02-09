@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run checks (UI + API + Perf smoke)
+        run: npm run ci:check
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "21"
+
+      - name: Download JMeter
+        shell: pwsh
+        run: |
+          $ver = "5.6.3"
+          $url = "https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-$ver.zip"
+          Invoke-WebRequest $url -OutFile jmeter.zip
+          Expand-Archive jmeter.zip -DestinationPath .
+          "$PWD\apache-jmeter-$ver\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report
+            test-results
+
+      - name: Upload JMeter reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jmeter-reports
+          path: performance/jmeter/reports

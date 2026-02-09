@@ -1,0 +1,15 @@
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+
+# JMeter
+/performance/jmeter/results/
+/performance/jmeter/reports/
+
+# Environment variables
+.env
+.env.*

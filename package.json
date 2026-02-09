@@ -1,0 +1,39 @@
+{
+  "name": "qa-automation-lab",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "format": "prettier -w .",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:api": "playwright test tests/api",
+    "test:smoke": "playwright test tests/smoke",
+    "test:all": "npm run test:ui && npm run test:smoke && npm run test:api",
+    "perf:smoke": "powershell -NoProfile -Command \"Remove-Item -Force performance\\jmeter\\results\\httpbin_smoke.jtl -ErrorAction SilentlyContinue; Remove-Item -Recurse -Force performance\\jmeter\\reports\\httpbin_smoke -ErrorAction SilentlyContinue; jmeter -n -t performance/jmeter/plans/httpbin_smoke.jmx -l performance/jmeter/results/httpbin_smoke.jtl -e -o performance/jmeter/reports/httpbin_smoke; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; node performance/jmeter/scripts/check-jtl.mjs performance/jmeter/results/httpbin_smoke.jtl 0\"",
+    "perf:load": "powershell -NoProfile -Command \"Remove-Item -Force performance\\jmeter\\results\\httpbin_load.jtl -ErrorAction SilentlyContinue; Remove-Item -Recurse -Force performance\\jmeter\\reports\\httpbin_load -ErrorAction SilentlyContinue; jmeter -n -t performance/jmeter/plans/httpbin_load.jmx -l performance/jmeter/results/httpbin_load.jtl -e -o performance/jmeter/reports/httpbin_load; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; node performance/jmeter/scripts/check-jtl.mjs performance/jmeter/results/httpbin_load.jtl 0\"",
+    "ci:check": "npm run test:smoke && npm run test:api && npm run perf:smoke",
+    "report": "playwright show-report",
+    "trace:show": "playwright show-trace test-results/**/trace.zip"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@playwright/test": "^1.58.1",
+    "@types/node": "^25.2.0",
+    "csv-parse": "^6.1.0",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "playwright": "^1.58.1",
+    "prettier": "^3.8.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.54.0"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3"
+  }
+}
