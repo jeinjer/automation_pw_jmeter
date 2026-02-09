@@ -27,6 +27,11 @@ jobs:
 
       - name: Run checks (UI + API + Perf smoke)
         run: npm run ci:check
+        env: 
+            BASE_URL:  ${{ secrets.BASE_URL }}
+            API_BASE_URL: ${{ secrets.API_BASE_URL }}
+            API_TEST_BASE_URL: ${{ secrets.API_TEST_BASE_URL }}
+            ENV: ci
 
       - name: Setup Java
         uses: actions/setup-java@v4
