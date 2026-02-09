@@ -32,6 +32,9 @@ jobs:
             API_BASE_URL: ${{ secrets.API_BASE_URL }}
             API_TEST_BASE_URL: ${{ secrets.API_TEST_BASE_URL }}
             ENV: ci
+            
+      - name: Run Perf smoke
+        run: npm run perf:smoke
 
       - name: Setup Java
         uses: actions/setup-java@v4
