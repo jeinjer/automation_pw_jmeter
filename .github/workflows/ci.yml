@@ -25,21 +25,18 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Run checks (UI + API + Perf smoke)
+      - name: Run UI + API
         run: npm run ci:check
-        env: 
-            BASE_URL:  ${{ secrets.BASE_URL }}
-            API_BASE_URL: ${{ secrets.API_BASE_URL }}
-            API_TEST_BASE_URL: ${{ secrets.API_TEST_BASE_URL }}
-            ENV: ci
-            
-      - name: Run Perf smoke
-        run: npm run perf:smoke
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          API_TEST_BASE_URL: ${{ secrets.API_TEST_BASE_URL }}
+          ENV: ci
 
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: "temurin"
+          distribution: temurin
           java-version: "21"
 
       - name: Download JMeter
@@ -50,6 +47,10 @@ jobs:
           Invoke-WebRequest $url -OutFile jmeter.zip
           Expand-Archive jmeter.zip -DestinationPath .
           "$PWD\apache-jmeter-$ver\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
+          jmeter -v
+
+      - name: Run Perf smoke
+        run: npm run perf:smoke
 
       - name: Upload Playwright report
         if: always()
